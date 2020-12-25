@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TestovoeZadanie</string>
+    <string name="button">Button</string>
+    <string name="current_time_toast">Current time: %1$s</string>
+    <string name="hour">%1$d hours</string>
+    <string name="min">%1$d minutes</string>
+    <string name="sec">%1$d seconds</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Тестовое задание</string>
+    <string name="button">Кнопка</string>
+    <string name="current_time_toast">Текущее время: %1$s</string>
+    <string name="hour">%1$d часов</string>
+    <string name="min">%1$d минут</string>
+    <string name="sec">%1$d секунд</string>
+</resources>
