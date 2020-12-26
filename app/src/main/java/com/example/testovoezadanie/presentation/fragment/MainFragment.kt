@@ -22,9 +22,7 @@ import java.util.*
 class MainFragment : BaseFragment() {
 
 //    private val viewModel: MainFragmentViewModel by fragmentViewModel()
-    private val epoxyController: MyEpoxyController by lazy{
-    MyEpoxyController()
-}
+
     private val viewModel: MainFragmentViewModel by fragmentViewModel()
 
 //    override fun invalidate() {
@@ -65,6 +63,9 @@ class MainFragment : BaseFragment() {
         }
         viewModel.subscribe {
             Log.d("MainFragment", "Subscribed: $it")
+            hour_text_view.text = context?.getString(R.string.hour, it.hour)
+            min_text_view.text = context?.getString(R.string.min, it.min)
+            sec_text_view.text = context?.getString(R.string.sec, it.sec)
         }
 
 
@@ -81,9 +82,7 @@ class MainFragment : BaseFragment() {
 
     private fun  controller(viewModel: MainFragmentViewModel, buildModels: EpoxyController.(state: MainFragmentState) -> Unit) = MyEpoxyController {
         withState(viewModel) {
-            hour_text_view.text = context?.getString(R.string.hour, it.hour)
-            min_text_view.text = context?.getString(R.string.min, it.min)
-            sec_text_view.text = context?.getString(R.string.sec, it.sec)
+
             buildModels(it)
         }
     }
