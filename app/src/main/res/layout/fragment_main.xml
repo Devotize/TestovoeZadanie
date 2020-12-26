@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<layout>
+    <data>
+        <variable
+            name="hours"
+            type="String" />
+        <variable
+            name="min"
+            type="String" />
+        <variable
+            name="sec"
+            type="String" />
+        <variable
+            name="viewModel"
+            type="com.example.testovoezadanie.presentation.fragment.MainFragmentState" />
+    </data>
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,14 +30,14 @@
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="15 hours" />
+        tools:text="@{hours}" />
 
     <TextView
         android:id="@+id/min_text_view"
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="16 minutes">
+        tools:text="@{min}">
 
     </TextView>
 
@@ -29,7 +46,7 @@
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="20 seconds">
+        tools:text="@{sec}">
 
     </TextView>
 
@@ -44,3 +61,4 @@
 
 
 </LinearLayout>
+</layout>

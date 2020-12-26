@@ -43,10 +43,11 @@ dependencies {
 
     //MvRx
     implementation 'com.airbnb.android:mvrx:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     //epoxy
     def epoxyVersion = "4.1.0"
     implementation "com.airbnb.android:epoxy:$epoxyVersion"
-    annotationProcessor "com.airbnb.android:epoxy-processor:$epoxyVersion"
+    kapt "com.airbnb.android:epoxy-processor:$epoxyVersion"
     implementation "com.airbnb.android:epoxy-databinding:$epoxyVersion"
     //coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'

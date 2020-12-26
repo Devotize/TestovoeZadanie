@@ -2,12 +2,16 @@ package com.example.testovoezadanie.presentation.fragment
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.*
 import com.example.testovoezadanie.R
+import com.example.testovoezadanie.fragmentMain
+import com.example.testovoezadanie.presentation.helper.MyEpoxyController
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -15,16 +19,31 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 
-class MainFragment : BaseMvRxFragment() {
+class MainFragment : BaseFragment() {
 
+//    private val viewModel: MainFragmentViewModel by fragmentViewModel()
+    private val epoxyController: MyEpoxyController by lazy{
+    MyEpoxyController()
+}
     private val viewModel: MainFragmentViewModel by fragmentViewModel()
 
+//    override fun invalidate() {
+////        withState(viewModel) {
+////            hour_text_view.text = context?.getString(R.string.hour, it.hour)
+////            min_text_view.text = context?.getString(R.string.min, it.min)
+////            sec_text_view.text = context?.getString(R.string.sec, it.sec)
+////        }
+//        epoxyController.requestModelBuild()
+//    }
 
-    override fun invalidate() {
-        withState(viewModel) {
-            hour_text_view.text = context?.getString(R.string.hour, it.hour)
-            min_text_view.text = context?.getString(R.string.min, it.min)
-            sec_text_view.text = context?.getString(R.string.sec, it.sec)
+    override fun epoxyController() = controller(viewModel) {state ->
+        fragmentMain {
+            id("fragment")
+            Log.d("MainFragment", "State: ${state.hour}")
+            hours(context?.getString(R.string.hour, state.hour))
+            min(context?.getString(R.string.min, state.min))
+            sec(context?.getString(R.string.sec, state.sec))
+
         }
     }
 
@@ -41,8 +60,11 @@ class MainFragment : BaseMvRxFragment() {
         CoroutineScope(IO).launch {
             while(true) {
                 viewModel.getCurrentTime()
-
             }
+
+        }
+        viewModel.subscribe {
+            Log.d("MainFragment", "Subscribed: $it")
         }
 
 
@@ -57,7 +79,14 @@ class MainFragment : BaseMvRxFragment() {
 
     }
 
-
+    private fun  controller(viewModel: MainFragmentViewModel, buildModels: EpoxyController.(state: MainFragmentState) -> Unit) = MyEpoxyController {
+        withState(viewModel) {
+            hour_text_view.text = context?.getString(R.string.hour, it.hour)
+            min_text_view.text = context?.getString(R.string.min, it.min)
+            sec_text_view.text = context?.getString(R.string.sec, it.sec)
+            buildModels(it)
+        }
+    }
 
 
 }
