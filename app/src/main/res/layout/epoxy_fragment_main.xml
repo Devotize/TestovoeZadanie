@@ -11,9 +11,7 @@
         <variable
             name="sec"
             type="String" />
-        <variable
-            name="viewModel"
-            type="com.example.testovoezadanie.presentation.fragment.MainFragmentState" />
+
     </data>
 
 
@@ -30,14 +28,14 @@
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="@{hours}" />
+        android:text="@{hours}" />
 
     <TextView
         android:id="@+id/min_text_view"
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="@{min}">
+        android:text="@{min}">
 
     </TextView>
 
@@ -46,7 +44,7 @@
         style="@style/AppTheme.TimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="@{sec}">
+        android:text="@{sec}">
 
     </TextView>
 

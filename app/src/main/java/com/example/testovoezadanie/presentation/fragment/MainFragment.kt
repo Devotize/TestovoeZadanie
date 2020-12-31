@@ -7,66 +7,70 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.*
 import com.example.testovoezadanie.R
 import com.example.testovoezadanie.fragmentMain
 import com.example.testovoezadanie.presentation.helper.MyEpoxyController
-import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.epoxy_fragment_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
 
 
-class MainFragment : BaseFragment() {
-
-//    private val viewModel: MainFragmentViewModel by fragmentViewModel()
+class MainFragment : BaseMvRxFragment(){
 
     private val viewModel: MainFragmentViewModel by fragmentViewModel()
+    private val epoxyController: MyEpoxyController by lazy{MyEpoxyController(requireContext())}
 
-//    override fun invalidate() {
-////        withState(viewModel) {
-////            hour_text_view.text = context?.getString(R.string.hour, it.hour)
-////            min_text_view.text = context?.getString(R.string.min, it.min)
-////            sec_text_view.text = context?.getString(R.string.sec, it.sec)
-////        }
-//        epoxyController.requestModelBuild()
-//    }
+    private var isFragmentVisible: Boolean = false
+    private lateinit var myGetTimeJob: Job
 
-    override fun epoxyController() = controller(viewModel) {state ->
-        fragmentMain {
-            id("fragment")
-            Log.d("MainFragment", "State: ${state.hour}")
-            hours(context?.getString(R.string.hour, state.hour))
-            min(context?.getString(R.string.min, state.min))
-            sec(context?.getString(R.string.sec, state.sec))
 
+    override fun onPause() {
+        super.onPause()
+        isFragmentVisible = false
+        Log.d("MainFragment", "Is fragment visible: $isFragmentVisible")
+        startGetTimeIfVisible()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isFragmentVisible = true
+        Log.d("MainFragment", "Is fragment visible: $isFragmentVisible")
+        startGetTimeIfVisible()
+
+    }
+
+    override fun invalidate() {
+        withState(viewModel) {
+            epoxyController.setData(it)
         }
     }
+
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.epoxy_fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(IO).launch {
+        isFragmentVisible = true
+        myGetTimeJob = CoroutineScope(IO).launch {
             while(true) {
                 viewModel.getCurrentTime()
             }
 
         }
-        viewModel.subscribe {
-            Log.d("MainFragment", "Subscribed: $it")
-            hour_text_view.text = context?.getString(R.string.hour, it.hour)
-            min_text_view.text = context?.getString(R.string.min, it.min)
-            sec_text_view.text = context?.getString(R.string.sec, it.sec)
-        }
+
+
 
 
         toast_button.setOnClickListener {
@@ -76,14 +80,18 @@ class MainFragment : BaseFragment() {
             val toastView = toast.view
             toastView.setBackgroundResource(R.drawable.toast_button_shape)
             toast.show()
+
         }
 
     }
 
-    private fun  controller(viewModel: MainFragmentViewModel, buildModels: EpoxyController.(state: MainFragmentState) -> Unit) = MyEpoxyController {
-        withState(viewModel) {
 
-            buildModels(it)
+
+    private fun startGetTimeIfVisible() {
+        if (isFragmentVisible) {
+            myGetTimeJob.start()
+        } else {
+            myGetTimeJob.cancel()
         }
     }
 
