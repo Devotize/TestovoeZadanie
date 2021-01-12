@@ -26,29 +26,19 @@ class MainFragment : BaseMvRxFragment(){
     private val viewModel: MainFragmentViewModel by fragmentViewModel()
     private val epoxyController: MyEpoxyController by lazy{MyEpoxyController(requireContext())}
 
-    private var isFragmentVisible: Boolean = false
-    private lateinit var myGetTimeJob: Job
 
-
-    override fun onPause() {
-        super.onPause()
-        isFragmentVisible = false
-        Log.d("MainFragment", "Is fragment visible: $isFragmentVisible")
-        startGetTimeIfVisible()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isFragmentVisible = true
-        Log.d("MainFragment", "Is fragment visible: $isFragmentVisible")
-        startGetTimeIfVisible()
-
-    }
 
     override fun invalidate() {
         withState(viewModel) {
-            epoxyController.setData(it)
+            epoxyController.withModels {
+                fragmentMain {
+                    id("SomeId")
+                    it.hour
+                }
+
+            }
         }
+
     }
 
 
@@ -62,37 +52,19 @@ class MainFragment : BaseMvRxFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        isFragmentVisible = true
-        myGetTimeJob = CoroutineScope(IO).launch {
-            while(true) {
-                viewModel.getCurrentTime()
-            }
-
-        }
-
-
-
+//        viewModel.invoke()
 
         toast_button.setOnClickListener {
-            val timeStamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
-
-            val toast = Toast.makeText(context, "${context?.getString(R.string.current_time_toast, timeStamp)}", Toast.LENGTH_SHORT)
-            val toastView = toast.view
-            toastView.setBackgroundResource(R.drawable.toast_button_shape)
-            toast.show()
-
+            viewModel.showToastWithTime(requireContext())
         }
 
     }
 
 
 
-    private fun startGetTimeIfVisible() {
-        if (isFragmentVisible) {
-            myGetTimeJob.start()
-        } else {
-            myGetTimeJob.cancel()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.disposables.clear()
     }
 
 

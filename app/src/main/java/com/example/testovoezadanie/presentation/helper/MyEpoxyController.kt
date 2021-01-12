@@ -14,15 +14,20 @@ import com.example.testovoezadanie.presentation.fragment.MainFragmentState
 
 class MyEpoxyController(private val context: Context): TypedEpoxyController<MainFragmentState>() {
 
+    var callback: EpoxyController.() -> Unit = {}
 
     override fun buildModels(data: MainFragmentState?) {
-        fragmentMain {
-            id(0)
-            hours(context.getString(R.string.hour, data?.hour))
-            sec(context.getString(R.string.sec, data?.sec))
-            min(context.getString(R.string.min, data?.min))
+        callback(this)
+    }
 
-        }
+    fun withModels(buildModels: EpoxyController.() -> Unit) {
+
+        callback = buildModels
+        setData(null)
 
     }
+
+
+
+
 }
