@@ -13,6 +13,7 @@ import com.airbnb.mvrx.*
 import com.example.testovoezadanie.R
 import com.example.testovoezadanie.fragmentMain
 import com.example.testovoezadanie.presentation.helper.MyEpoxyController
+import com.example.testovoezadanie.presentation.helper.fragmentCustomModel
 import kotlinx.android.synthetic.main.epoxy_fragment_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -26,14 +27,21 @@ class MainFragment : BaseMvRxFragment(){
     private val viewModel: MainFragmentViewModel by fragmentViewModel()
     private val epoxyController: MyEpoxyController by lazy{MyEpoxyController(requireContext())}
 
+    companion object{
+        private const val TAG = "MainFragment"
+    }
 
 
     override fun invalidate() {
         withState(viewModel) {
             epoxyController.withModels {
-                fragmentMain {
-                    id("SomeId")
-                    it.hour
+                Log.d(TAG, "invalidate: called")
+                hour_text_view.text = it.hour.toString()
+                fragmentCustomModel {
+                    id("custom")
+                    hours(it.hour.toString())
+                    minutes(it.min.toString())
+                    seconds(it.sec.toString())
                 }
 
             }
@@ -52,7 +60,6 @@ class MainFragment : BaseMvRxFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.invoke()
 
         toast_button.setOnClickListener {
             viewModel.showToastWithTime(requireContext())

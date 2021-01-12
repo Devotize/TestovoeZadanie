@@ -32,16 +32,19 @@ class MainFragmentViewModel(initialState: MainFragmentState): BaseMvRxViewModel<
 
     private fun getCurrentTime() {
         Log.d(TAG, "getCurrentTime: called")
-        val observable = Observable.create<MainFragmentState> {
-            val calendar = Calendar.getInstance()
-            val hours = calendar.get(Calendar.HOUR_OF_DAY)
-            val min = calendar.get(Calendar.MINUTE)
-            val sec = calendar.get(Calendar.SECOND)
-            it.onNext(MainFragmentState(hours, min, sec))
-        }.debounce(500, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
+        val observable = Observable
+            .interval(500, TimeUnit.MILLISECONDS)
+            .map {
+                val calendar = Calendar.getInstance()
+                val hours = calendar.get(Calendar.HOUR_OF_DAY)
+                val min = calendar.get(Calendar.MINUTE)
+                val sec = calendar.get(Calendar.SECOND)
+                MainFragmentState(hours, min, sec)
+            }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+
         disposables.add(observable.subscribe {
+            Log.d(TAG, "onNext: ${it.sec}")
             setState { copy(it.hour, it.min, it.sec) }
         })
     }
